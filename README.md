@@ -1,0 +1,1 @@
+A Discord bot to automatically draft picks for x number of players in Civ 5
