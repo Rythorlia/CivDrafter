@@ -4,6 +4,7 @@ import logging
 import os
 import platform
 
+from keep_alive import keep_alive
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
 from dotenv import load_dotenv
@@ -167,4 +168,5 @@ async def load_cogs() -> None:
                 bot.logger.error(f"Failed to load extension {extension}\n{exception}")
 
 asyncio.run(load_cogs())
+keep_alive()
 bot.run(os.getenv('DISCORD_TOKEN')) # secret token for the CivDrafter bot stored in a .env file
