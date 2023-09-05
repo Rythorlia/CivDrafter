@@ -1,63 +1,49 @@
 import os
 import platform
+import random
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import checks
+from helpers import checks, civs
 
 
 class DraftCiv(commands.Cog, name="draftciv"):
     def __init__(self, bot):
         self.bot = bot
-
+        
+    
     @commands.hybrid_command(
-        name="help", description="List all commands the bot has loaded."
+        name="draft", description="Draft civs for x number of players."
     )
-    async def help(self, context: Context) -> None:
-        prefix = os.getenv('PREFIX')
+    async def draft(self, context: Context, game_type:str = 'NORMAL', number_of_civs_draft: int = 3) -> None:
         embed = discord.Embed(
-            title="Help", description="List of available commands:", color=0x9C84EF
+            title="Drafted Civs", description="List of drafted civs:", color=0x9C84EF
         )
-        for i in self.bot.cogs:
-            cog = self.bot.get_cog(i.lower())
-            commands = cog.get_commands()
-            data = []
-            for command in commands:
-                description = command.description.partition("\n")[0]
-                data.append(f"{prefix}{command.name} - {description}")
-            help_text = "\n".join(data)
-            embed.add_field(
-                name=i.capitalize(), value=f"```{help_text}```", inline=False
-            )
-        await context.send(embed=embed)
-
-    @commands.hybrid_command(
-        name="botinfo",
-        description="Get some useful (or not) information about the bot.",
-    )
-    async def botinfo(self, context: Context) -> None:
-        """
-        Get some useful (or not) information about the bot.
-
-        :param context: The hybrid command context.
-        """
-        embed = discord.Embed(
-            description="Used [Krypton's](https://krypton.ninja) template",
-            color=0x9C84EF,
-        )
-        embed.set_author(name="Bot Information")
-        embed.add_field(name="Owner:", value=".rythoria", inline=True)
-        embed.add_field(
-            name="Python Version:", value=f"{platform.python_version()}", inline=True
-        )
-        embed.add_field(
-            name="Prefix:",
-            value=f"/ (Slash Commands) or {os.getenv('PREFIX')} for normal commands",
-            inline=False,
-        )
-        embed.set_footer(text=f"Requested by {context.author}")
+        
+        print(game_type.upper())
+        
+        civ_list = []
+        
+        match game_type.upper():
+            case 'NAVAL':
+                civ_list = civs.NAVAL.split(' ')
+            case 'NORMAL' | _:
+                civ_list = civs.NORMAL.split(' ')
+                
+        players = context.channel.members
+        
+        for player in players:
+            if not player.bot:
+                picks = []
+                for _ in range(number_of_civs_draft):
+                    picks.append(civ_list.pop(random.randrange(0,len(civ_list))))
+                embed.add_field(
+                    name=player.display_name,
+                    value=" ".join(str(civ) for civ in picks)
+                )
+                
         await context.send(embed=embed)
 
 async def setup(bot):
