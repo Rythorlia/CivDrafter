@@ -22,8 +22,6 @@ class DraftCiv(commands.Cog, name="draftciv"):
             title="Drafted Civs", description="List of drafted civs:", color=0x9C84EF
         )
         
-        print(game_type.upper())
-        
         civ_list = []
         
         match game_type.upper():
