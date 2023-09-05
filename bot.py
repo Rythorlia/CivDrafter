@@ -72,17 +72,6 @@ bot.logger = logger
 async def test(ctx, arg):
     await ctx.send(arg)
 
-# define our commands for the user to enter
-@bot.command(pass_context=True, name='draft')
-async def draft_civs(ctx, game_type:str = None, game_role: discord.Role = None, number_of_civs_draft: int = 3):
-  match game_type.upper:
-    case 'NAVAL':
-      return
-    case 'NORMAL' | None | _:
-      return
-      
-  await ctx.send(game_type)
-
 @bot.event
 async def on_ready() -> None:
   """
@@ -107,12 +96,6 @@ async def on_message(message):
     await message.channel.send('Bot is alive and well')
     
   await bot.process_commands(message)
-    
-  channel = discord.utils.get(message.guild.text_channels, name="general")
-  print(channel)
-  messages = [message async for message in channel.history(limit=50)]
-  # for single_message in messages:
-  #   if 'hello' in single_message.content:
       
 @bot.event
 async def on_command_completion(context: Context) -> None:
