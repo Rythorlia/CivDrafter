@@ -9,7 +9,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
 from dotenv import load_dotenv
 
-load_dotenv() # load our .env file to access our secrets
+load_dotenv()  # load our .env file to access our secrets
 
 intents = discord.Intents.all()
 intents.members = True
@@ -19,6 +19,7 @@ bot = Bot(
     intents=intents,
     help_command=None,
 )
+
 
 class LoggingFormatter(logging.Formatter):
     # Colours
@@ -58,7 +59,8 @@ logger.setLevel(logging.INFO)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(LoggingFormatter())
 # File handler
-file_handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
+file_handler = logging.FileHandler(
+    filename="discord.log", encoding="utf-8", mode="w")
 file_handler_formatter = logging.Formatter(
     "[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{"
 )
@@ -68,36 +70,40 @@ file_handler.setFormatter(file_handler_formatter)
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 bot.logger = logger
-    
+
+
 @bot.command()
 async def test(ctx, arg):
     await ctx.send(arg)
 
+
 @bot.event
 async def on_ready() -> None:
-  """
-  Executed when the bot is ready.
-  """
-  bot.logger.info(f"Logged in as {bot.user.name}")
-  bot.logger.info(f"discord.py API version: {discord.__version__}")
-  bot.logger.info(f"Python version: {platform.python_version()}")
-  bot.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
-  bot.logger.info("-------------------")
-  if os.getenv('SYNC_COMMANDS_GLOBALLY'):
-      bot.logger.info("Syncing commands globally...")
-      await bot.tree.sync()
+    """
+    Executed when the bot is ready.
+    """
+    bot.logger.info(f"Logged in as {bot.user.name}")
+    bot.logger.info(f"discord.py API version: {discord.__version__}")
+    bot.logger.info(f"Python version: {platform.python_version()}")
+    bot.logger.info(
+        f"Running on: {platform.system()} {platform.release()} ({os.name})")
+    bot.logger.info("-------------------")
+    if os.getenv('SYNC_COMMANDS_GLOBALLY'):
+        bot.logger.info("Syncing commands globally...")
+        await bot.tree.sync()
 
 
 @bot.event
 async def on_message(message):
-  if message.author == bot.user:
-    return
+    if message.author == bot.user:
+        return
 
-  if message.content.startswith('$test'):
-    await message.channel.send('Bot is alive and well')
-    
-  await bot.process_commands(message)
-      
+    if message.content.startswith('$test'):
+        await message.channel.send('Bot is alive and well')
+
+    await bot.process_commands(message)
+
+
 @bot.event
 async def on_command_completion(context: Context) -> None:
     """
@@ -152,7 +158,8 @@ async def on_command_error(context: Context, error) -> None:
         await context.send(embed=embed)
     else:
         raise error
-      
+
+
 async def load_cogs() -> None:
     """
     Executed whenever the bot starts
@@ -165,8 +172,10 @@ async def load_cogs() -> None:
                 bot.logger.info(f"Loaded extension '{extension}'")
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
-                bot.logger.error(f"Failed to load extension {extension}\n{exception}")
+                bot.logger.error(
+                    f"Failed to load extension {extension}\n{exception}")
 
 asyncio.run(load_cogs())
 keep_alive()
-bot.run(os.getenv('DISCORD_TOKEN')) # secret token for the CivDrafter bot stored in a .env file
+# secret token for the CivDrafter bot stored in a .env file
+bot.run(os.getenv('DISCORD_TOKEN'))
