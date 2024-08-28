@@ -1,12 +1,10 @@
-import os
-import platform
 import random
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import checks, civs
+from helpers import civs
 
 
 class DraftCiv(commands.Cog, name="draftciv"):
@@ -17,6 +15,7 @@ class DraftCiv(commands.Cog, name="draftciv"):
     @commands.hybrid_command(
         name="draft", description="Draft civs for x number of players."
     )
+
     async def draft(self, context: Context, game_type:str = 'NORMAL', number_of_civs_draft: int = 3) -> None:
         embed = discord.Embed(
             title="Drafted Civs", description="List of drafted civs:", color=0x9C84EF

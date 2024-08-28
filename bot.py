@@ -4,10 +4,16 @@ import logging
 import os
 import platform
 
+import firebase_admin
+from firebase_admin import credentials, firestore
 from keep_alive import keep_alive
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands import Bot, Context
 from dotenv import load_dotenv
+
+
+
+from pytz import timezone
 
 load_dotenv()  # load our .env file to access our secrets
 
@@ -20,6 +26,11 @@ bot = Bot(
     help_command=None,
 )
 
+try:
+    cred = credentials.Certificate(os.getenv('FIREBASE_KEY_PATH'))
+    firebase_admin.initialize_app(cred, {'databaseURL': os.getenv('FIREBASE_URL')})
+except:
+    raise Exception("Could not initialise connection to Firebase")
 
 class LoggingFormatter(logging.Formatter):
     # Colours
